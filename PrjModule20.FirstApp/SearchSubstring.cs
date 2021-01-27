@@ -1,14 +1,18 @@
-﻿using SubstringSearchLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using SubstringSearchLib;
 
 namespace PrjModule20.FirstApp
 {
     public static class SearchSubstring
     {
+        /// <summary>
+        ///     Multi-thread search of substring in files
+        /// </summary>
+        /// <param name="args">Array of files</param>
+        /// <param name="substring">Substring to find</param>
         public static bool FindSubstrings(IEnumerable<string> args, string substring)
         {
             var threads = new List<Thread>();
@@ -17,7 +21,7 @@ namespace PrjModule20.FirstApp
                 if (!File.Exists(file))
                     throw new ArgumentException($"File {file} doesn't exist");
 
-                var fileFinderTread = new Thread((() =>
+                var fileFinderTread = new Thread(() =>
                 {
                     var start = DateTime.Now;
                     var searchResult = CheckStringExistence(file, substring);
@@ -25,21 +29,20 @@ namespace PrjModule20.FirstApp
                     {
                         var consoleWriteThread = new Thread(DisplayResult);
                         consoleWriteThread.Start(searchResult);
-                        while (consoleWriteThread.ThreadState != System.Threading.ThreadState.Stopped)
+                        while (consoleWriteThread.ThreadState != ThreadState.Stopped)
                         {
                         }
                     }
 
                     var end = DateTime.Now;
-                    var ts = (end - start);
+                    var ts = end - start;
                     Console.WriteLine($"App 1 ThreadID: {Thread.CurrentThread.ManagedThreadId} time taken: {ts}");
-
-                }));
+                });
                 threads.Add(fileFinderTread);
                 fileFinderTread.Start();
             }
 
-            while (threads.FindIndex(t => t.ThreadState != System.Threading.ThreadState.Stopped) != -1)
+            while (threads.FindIndex(t => t.ThreadState != ThreadState.Stopped) != -1)
             {
             }
 
@@ -76,7 +79,9 @@ namespace PrjModule20.FirstApp
 
             myStreamReader.Close();
 
-            return found ? new SearchResult() { EntryIndex = pos - shift, FileName = file } : new SearchResult() { EntryIndex = -1, FileName = file };
+            return found
+                ? new SearchResult {EntryIndex = pos - shift, FileName = file}
+                : new SearchResult {EntryIndex = -1, FileName = file};
         }
 
         private static void DisplayResult(object searchResults)
@@ -86,12 +91,12 @@ namespace PrjModule20.FirstApp
                 case null:
                     throw new ArgumentNullException(nameof(searchResults));
                 case SearchResult resultsToDisplay:
-                    //Console.WriteLine($"Substring was found in file: {resultsToDisplay.FileName} on position: {resultsToDisplay.EntryIndex}");
+                    Console.WriteLine(
+                        $"Substring was found in file: {resultsToDisplay.FileName} on position: {resultsToDisplay.EntryIndex}");
                     break;
                 default:
                     throw new ArgumentException(nameof(searchResults));
             }
         }
-
     }
 }

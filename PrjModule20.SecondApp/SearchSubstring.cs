@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -7,12 +6,16 @@ namespace PrjModule20.SecondApp
 {
     public class SearchSubstring
     {
-        private static SemaphoreSlim _sem;
+        private static readonly SemaphoreSlim Sem;
+
         static SearchSubstring()
         {
-            _sem = new SemaphoreSlim(10);
+            Sem = new SemaphoreSlim(10);
         }
 
+        /// <summary>
+        ///     Multi-thread display words on even position
+        /// </summary>
         public static bool SearchEvenWords(string[] args)
         {
             foreach (var file in args)
@@ -22,13 +25,13 @@ namespace PrjModule20.SecondApp
 
                 var evenWordFinder = new Thread(DisplayEvenWords);
                 evenWordFinder.Start(file);
+            }
 
-            }
             Thread.Sleep(1);
-            while (_sem.CurrentCount!=10)
+            while (Sem.CurrentCount != 10)
             {
-                
             }
+
             return true;
         }
 
@@ -39,7 +42,7 @@ namespace PrjModule20.SecondApp
                 case null:
                     throw new ArgumentNullException(nameof(file));
                 case string resultsToDisplay:
-                    _sem.Wait();
+                    Sem.Wait();
                     var start = DateTime.Now;
                     string line;
                     var readFile = new StreamReader(resultsToDisplay);
@@ -47,23 +50,19 @@ namespace PrjModule20.SecondApp
                     {
                         var words = line.Replace("  ", " ").Split(' ');
                         for (var i = words.Length - 1; i >= 0; i--)
-                        {
-                            if (i%2==0)
-                            {
-                               // Console.Write(words[i] +" ");
-                            }
-                        }
+                            if (i % 2 == 0)
+                                Console.Write(words[i] + " ");
                     }
+
                     var end = DateTime.Now;
-                    var ts = (end - start);
+                    var ts = end - start;
                     Console.WriteLine($"App 2 ThreadID: {Thread.CurrentThread.ManagedThreadId} time taken: {ts}");
 
-                    _sem.Release();
+                    Sem.Release();
                     break;
                 default:
                     throw new ArgumentException(nameof(file));
             }
-           
         }
     }
 }
