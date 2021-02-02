@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using PrjModule20.FirstApp;
 
 namespace PrjModule20
@@ -11,17 +12,13 @@ namespace PrjModule20
 
             args = new[] {"File1.txt"};
 
-            var task1Ended = SearchSubstring.FindSubstrings(args, "Justo donec");
-            while (!task1Ended)
-            {
-            }
+            var task1 = SearchSubstring.FindSubstrings(args, "Justo donec");
+            Task.WaitAll(task1);
 
             Console.WriteLine("App 1 finished\n");
 
-            var task2Ended = SecondApp.SearchSubstring.SearchEvenWords(args);
-            while (!task2Ended)
-            {
-            }
+            var task2 = SecondApp.SearchSubstring.SearchEvenWords(args);
+            Task.WaitAll(task2);
 
             Console.WriteLine("App 2 finished\n");
 
@@ -31,17 +28,13 @@ namespace PrjModule20
 
             args = new[] {"File1.txt", "File2.txt"};
 
-            task1Ended = SearchSubstring.FindSubstrings(args, "Justo donec");
-            while (!task1Ended)
-            {
-            }
+            task1 = SearchSubstring.FindSubstrings(args, "Justo donec");
+            Task.WaitAll(task1);
 
             Console.WriteLine("App 1 finished\n");
 
-            task2Ended = SecondApp.SearchSubstring.SearchEvenWords(args);
-            while (!task2Ended)
-            {
-            }
+            task2 = SecondApp.SearchSubstring.SearchEvenWords(args);
+            Task.WaitAll(task2);
 
             Console.WriteLine("App 2 finished\n");
 
@@ -51,17 +44,13 @@ namespace PrjModule20
 
             args = new[] {"File1.txt", "File2.txt", "File3.txt"};
 
-            task1Ended = SearchSubstring.FindSubstrings(args, "Justo donec");
-            while (!task1Ended)
-            {
-            }
+            task1 = SearchSubstring.FindSubstrings(args, "Justo donec");
+            Task.WaitAll(task1);
 
             Console.WriteLine("App 1 finished\n");
 
-            task2Ended = SecondApp.SearchSubstring.SearchEvenWords(args);
-            while (!task2Ended)
-            {
-            }
+            task2 = SecondApp.SearchSubstring.SearchEvenWords(args);
+            Task.WaitAll(task2);
 
             Console.WriteLine("App 2 finished\n");
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using SubstringSearchLib;
 
 namespace PrjModule20.FirstApp
@@ -13,15 +14,15 @@ namespace PrjModule20.FirstApp
         /// </summary>
         /// <param name="args">Array of files</param>
         /// <param name="substring">Substring to find</param>
-        public static bool FindSubstrings(IEnumerable<string> args, string substring)
+        public static Task[] FindSubstrings(IEnumerable<string> args, string substring)
         {
-            var threads = new List<Thread>();
+            var tasks = new List<Task>();
             foreach (var file in args)
             {
                 if (!File.Exists(file))
                     throw new ArgumentException($"File {file} doesn't exist");
 
-                var fileFinderTread = new Thread(() =>
+                var fileFinderTread = new Task(() =>
                 {
                     var start = DateTime.Now;
                     var searchResult = CheckStringExistence(file, substring);
@@ -36,17 +37,13 @@ namespace PrjModule20.FirstApp
 
                     var end = DateTime.Now;
                     var ts = end - start;
-                    Console.WriteLine($"App 1 ThreadID: {Thread.CurrentThread.ManagedThreadId} time taken: {ts}");
+                    Console.WriteLine($"\nApp 1 time taken: {ts}");
                 });
-                threads.Add(fileFinderTread);
+                tasks.Add(fileFinderTread);
                 fileFinderTread.Start();
             }
 
-            while (threads.FindIndex(t => t.ThreadState != ThreadState.Stopped) != -1)
-            {
-            }
-
-            return true;
+            return tasks.ToArray();
         }
 
         private static SearchResult CheckStringExistence(string file, string substring)
