@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using SubstringSearchLib;
 
@@ -28,16 +27,12 @@ namespace PrjModule20.FirstApp
                     var searchResult = CheckStringExistence(file, substring);
                     if (searchResult != null && searchResult.EntryIndex == -1)
                     {
-                        var consoleWriteThread = new Thread(DisplayResult);
-                        consoleWriteThread.Start(searchResult);
-                        while (consoleWriteThread.ThreadState != ThreadState.Stopped)
-                        {
-                        }
+                        Task.Factory.StartNew((() => DisplayResult(searchResult))).Wait();
                     }
 
                     var end = DateTime.Now;
                     var ts = end - start;
-                    Console.WriteLine($"\nApp 1 time taken: {ts}");
+                    Console.WriteLine($"\nApp 1 time taken: {ts.TotalMilliseconds}");
                 });
                 tasks.Add(fileFinderTread);
                 fileFinderTread.Start();
@@ -88,8 +83,8 @@ namespace PrjModule20.FirstApp
                 case null:
                     throw new ArgumentNullException(nameof(searchResults));
                 case SearchResult resultsToDisplay:
-                    Console.WriteLine(
-                        $"Substring was found in file: {resultsToDisplay.FileName} on position: {resultsToDisplay.EntryIndex}");
+                    //Console.WriteLine(
+                    //    $"Substring was found in file: {resultsToDisplay.FileName} on position: {resultsToDisplay.EntryIndex}");
                     break;
                 default:
                     throw new ArgumentException(nameof(searchResults));

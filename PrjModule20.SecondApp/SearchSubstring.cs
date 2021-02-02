@@ -14,6 +14,7 @@ namespace PrjModule20.SecondApp
         /// </summary>
         public static Task[] SearchEvenWords(string[] args)
         {
+            ThreadPool.SetMaxThreads(10, 10);
             var tasks = new List<Task>();
             foreach (var file in args)
             {
@@ -25,7 +26,6 @@ namespace PrjModule20.SecondApp
                 evenWordFinder.Start();
             }
 
-            Thread.Sleep(1);
             return tasks.ToArray();
         }
 
@@ -42,14 +42,14 @@ namespace PrjModule20.SecondApp
                     while ((line = readFile.ReadLine()) != null)
                     {
                         var words = line.Replace("  ", " ").Split(' ');
-                        for (var i = words.Length - 1; i >= 0; i--)
-                            if (i % 2 == 0)
-                                Console.Write(words[i] + " ");
+                        //for (var i = words.Length - 1; i >= 0; i--)
+                        //    if (i % 2 == 0)
+                        //        Console.Write(words[i] + " ");
                     }
 
                     var end = DateTime.Now;
                     var ts = end - start;
-                    Console.WriteLine($"\nApp 2 time taken: {ts}");
+                    Console.WriteLine($"\nApp 2 time taken: {ts.TotalMilliseconds}");
 
                     break;
                 default:
